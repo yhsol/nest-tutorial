@@ -3,31 +3,28 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
-  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
   Query,
   Redirect,
+  Res,
 } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
+import { Response } from 'express';
 import { UpdateCatDto } from './dto/update-cat.dto';
-import { ListAllEntities } from './entity/list-all.entity';
 
 @Controller('cats')
 export class CatsController {
   @Post()
-  @Header('Cache-Control', 'none')
-  @HttpCode(204)
-  async create(@Body() createCatDto: CreateCatDto): Promise<string> {
-    return 'This action adds a new cat';
+  create(@Res() res: Response) {
+    res.status(HttpStatus.CREATED).send();
   }
 
   @Get()
-  @Redirect('https://nestjs.com', 301)
-  findAll(@Query() query: ListAllEntities): string {
-    return `This action returns all cats (limit: ${query.limit} items)`;
+  findAll(@Res({ passthrough: true }) res: Response) {
+    res.status(HttpStatus.OK);
+    return [];
   }
 
   @Get(':id')
