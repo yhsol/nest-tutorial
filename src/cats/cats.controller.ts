@@ -12,19 +12,26 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { CatsService } from './cats.service';
+import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
+import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
+  // The `CatsService` is injected through the class constructor.
+  // Notice the use of the `private` systax. This shorthand allows us to
+  // both declare and initialize the `catsService` member immediately in the same location.
+  constructor(private catsService: CatsService) {}
+
   @Post()
-  create(@Res() res: Response) {
-    res.status(HttpStatus.CREATED).send();
+  async create(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
   }
 
   @Get()
-  findAll(@Res({ passthrough: true }) res: Response) {
-    res.status(HttpStatus.OK);
-    return [];
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
   }
 
   @Get(':id')
